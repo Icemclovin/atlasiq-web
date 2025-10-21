@@ -13,14 +13,14 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 import bcrypt
 from sqlalchemy import select
-from app.database import async_engine, async_session_maker
-from app.models.user import User, Base
+from app.database import engine, AsyncSessionLocal, Base
+from app.models.user import User
 
 
 async def init_database():
     """Initialize database tables"""
     print("🔧 Creating database tables...")
-    async with async_engine.begin() as conn:
+    async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     print("✅ Database tables created")
 
@@ -31,7 +31,7 @@ async def create_admin_account():
     admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
     admin_name = os.getenv("ADMIN_NAME", "Administrator")
     
-    async with async_session_maker() as session:
+    async with AsyncSessionLocal() as session:
         # Check if admin exists
         result = await session.execute(
             select(User).where(User.email == admin_email)
