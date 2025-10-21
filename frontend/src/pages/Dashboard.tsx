@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { dataService } from '@/services/data';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { Loading } from '@/components/Loading';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, TrendingDown, Activity, Globe, AlertTriangle, LogOut } from 'lucide-react';
 import type { DashboardSummary, CountrySummary } from '@/types';
 
-export const Dashboard: React.FC = () => {
+export const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
@@ -193,7 +193,7 @@ interface CountryCardProps {
   country: CountrySummary;
 }
 
-const CountryCard: React.FC<CountryCardProps> = ({ country }) => {
+const CountryCard = ({ country }: CountryCardProps) => {
   const getRiskColor = (score: number) => {
     if (score >= 70) return 'text-red-600 bg-red-100';
     if (score >= 40) return 'text-yellow-600 bg-yellow-100';
