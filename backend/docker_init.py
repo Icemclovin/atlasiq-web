@@ -101,10 +101,14 @@ async def main():
 
 
 if __name__ == "__main__":
-    # Run the main function but DON'T call sys.exit()
-    # This allows the Dockerfile CMD to continue to the next command
-    exit_code = asyncio.run(main())
-    if exit_code != 0:
-        print(f"⚠️  Initialization returned exit code: {exit_code}")
+    # Run the main function
+    try:
+        exit_code = asyncio.run(main())
+        if exit_code != 0:
+            print(f"⚠️  Initialization returned exit code: {exit_code}")
+            print("⚠️  Continuing to start server anyway...")
+    except Exception as e:
+        print(f"⚠️  Exception in initialization: {e}")
         print("⚠️  Continuing to start server anyway...")
-    # Don't call sys.exit() - let the shell continue to uvicorn
+    # Always exit with 0 so the Dockerfile CMD continues
+    exit(0)
