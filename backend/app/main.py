@@ -116,9 +116,10 @@ async def root():
 
 
 # Import and include routers
-from app.api.v1 import auth, data
+from app.api.v1 import auth, data, companies
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(data.router, prefix="/api/v1/data", tags=["Data"])
+app.include_router(companies.router, prefix="/api/v1", tags=["Companies"])
 
 
 if __name__ == "__main__":
