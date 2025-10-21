@@ -1,17 +1,13 @@
 {
-  "providers": ["python"],
   "phases": {
     "setup": {
-      "nixPkgs": ["python311", "python311Packages.pip"]
+      "nixPkgs": ["python311"]
     },
     "install": {
       "cmds": ["pip install -r requirements.txt"]
-    },
-    "build": {
-      "cmds": ["python docker_init.py"]
     }
   },
   "start": {
-    "cmd": "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    "cmd": "python docker_init.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
   }
 }
