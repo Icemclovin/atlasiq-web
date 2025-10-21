@@ -1,10 +1,7 @@
 # Railway Backend Configuration
 
-# This file tells Railway how to deploy the backend
-
 [build]
 builder = "NIXPACKS"
-buildCommand = "pip install -r requirements.txt"
 
 [deploy]
 startCommand = "python docker_init.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
