@@ -19,10 +19,17 @@ from app.models.user import User
 
 async def init_database():
     """Initialize database tables"""
-    print("🔧 Creating database tables...")
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    print("✅ Database tables created")
+    print("🔧 Checking database tables...")
+    try:
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        print("✅ Database tables ready")
+    except Exception as e:
+        # If tables already exist, that's fine
+        if "already exists" in str(e):
+            print("✅ Database tables already exist")
+        else:
+            raise
 
 
 async def create_admin_account():
@@ -79,10 +86,18 @@ async def main():
         print("✅ Initialization complete!")
         return 0
     except Exception as e:
-        print(f"❌ Initialization failed: {e}")
-        import traceback
-        traceback.print_exc()
-        return 1
+        # If it's just a "already exists" error, don't fail - it's OK
+        error_msg = str(e)
+        if "already exists" in error_msg.lower():
+            print("ℹ️  Database already initialized, continuing...")
+            print("=" * 50)
+            print("✅ Initialization complete!")
+            return 0
+        else:
+            print(f"❌ Initialization failed: {e}")
+            import traceback
+            traceback.print_exc()
+            return 1
 
 
 if __name__ == "__main__":
