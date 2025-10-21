@@ -25,6 +25,8 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD python -c "import urllib.request; import os; urllib.request.urlopen(f'http://localhost:{os.getenv(\"PORT\", \"8000\")}/health')" || exit 1
 
-# Run initialization and start server
-# Use sh -c to run commands in sequence regardless of exit codes
-CMD sh -c "python docker_init.py; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+# Make debug script executable
+RUN chmod +x debug_start.sh
+
+# Run debug startup script
+CMD ["/bin/sh", "debug_start.sh"]
