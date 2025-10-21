@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { clsx } from 'clsx';
 
 interface CardProps {
@@ -8,12 +8,12 @@ interface CardProps {
   hover?: boolean;
 }
 
-export const Card: React.FC<CardProps> = ({ 
+export const Card = ({ 
   children, 
   className, 
   padding = 'md',
   hover = false 
-}) => {
+}: CardProps) => {
   const paddingClasses = {
     none: '',
     sm: 'p-3',

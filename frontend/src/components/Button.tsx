@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes } from 'react';
 import { clsx } from 'clsx';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -8,7 +8,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = ({
   children,
   variant = 'primary',
   size = 'md',
@@ -17,7 +17,7 @@ export const Button: React.FC<ButtonProps> = ({
   className,
   disabled,
   ...props
-}) => {
+}: ButtonProps) => {
   const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variantClasses = {

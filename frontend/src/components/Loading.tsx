@@ -1,4 +1,3 @@
-import React from 'react';
 import { clsx } from 'clsx';
 
 interface SpinnerProps {
@@ -6,7 +5,7 @@ interface SpinnerProps {
   className?: string;
 }
 
-export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', className }) => {
+export const Spinner = ({ size = 'md', className }: SpinnerProps) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
     md: 'h-8 w-8',
@@ -43,7 +42,7 @@ interface LoadingProps {
   message?: string;
 }
 
-export const Loading: React.FC<LoadingProps> = ({ message = 'Loading...' }) => {
+export const Loading = ({ message = 'Loading...' }: LoadingProps) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px]">
       <Spinner size="lg" />
