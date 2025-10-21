@@ -1,0 +1,24 @@
+# Quick GitHub Push Commands
+# Copy and paste these commands one by one in PowerShell
+
+# 1. First, go to https://github.com/new and create a repository named "atlasiq-web"
+
+# 2. Then run these commands (replace YOUR-USERNAME with your GitHub username):
+
+cd C:\Users\ASUS\Desktop\parfumai\atlasiq-web
+
+git init
+
+git add .
+
+git commit -m "Initial commit - AtlasIQ Web Application"
+
+git remote add origin https://github.com/YOUR-USERNAME/atlasiq-web.git
+
+git branch -M main
+
+git push -u origin main
+
+# Done! Your code is now on GitHub!
+
+# Next: Deploy online (see DEPLOYMENT_GUIDE.md)

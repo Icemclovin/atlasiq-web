@@ -1,0 +1,22 @@
+# Render Backend Configuration
+
+services:
+  - type: web
+    name: atlasiq-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python docker_init.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./data/atlasiq.db
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: DEBUG
+        value: false
+      - key: APP_ENV
+        value: production

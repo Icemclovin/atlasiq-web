@@ -1,0 +1,176 @@
+version: "3.8"
+
+services:
+  # =============================================================================
+  # PostgreSQL Database
+  # =============================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: atlasiq_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-atlasiq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-atlasiq_password_change_me}
+      POSTGRES_DB: ${POSTGRES_DB:-atlasiq_db}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=en_US.UTF-8 --lc-ctype=en_US.UTF-8"
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init_db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-atlasiq}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - atlasiq_network
+    restart: unless-stopped
+
+  # =============================================================================
+  # Redis Cache & Pub/Sub
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: atlasiq_redis
+    command: redis-server --appendonly yes --maxmemory 512mb --maxmemory-policy allkeys-lru
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - atlasiq_network
+    restart: unless-stopped
+
+  # =============================================================================
+  # FastAPI Backend
+  # =============================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        PYTHON_VERSION: "3.11"
+    container_name: atlasiq_backend
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ALGORITHM=${JWT_ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      - APP_ENV=${APP_ENV:-development}
+      - DEBUG=${DEBUG:-true}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DATA_REFRESH_SCHEDULE=${DATA_REFRESH_SCHEDULE:-0 2 * * *}
+      - ENABLE_SCHEDULER=${ENABLE_SCHEDULER:-true}
+      - ENABLE_CACHING=${ENABLE_CACHING:-true}
+      - SUPPORTED_COUNTRIES=${SUPPORTED_COUNTRIES:-NL,BE,LU,DE}
+      - SUPPORTED_SECTORS=${SUPPORTED_SECTORS:-C,G,J}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
+      - backend_exports:/app/exports
+      - backend_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - atlasiq_network
+    restart: unless-stopped
+    command: >
+      sh -c "
+        echo 'Waiting for database...' &&
+        python -m alembic upgrade head &&
+        echo 'Starting FastAPI server...' &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+
+  # =============================================================================
+  # React Frontend
+  # =============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NODE_VERSION: "18"
+    container_name: atlasiq_frontend
+    environment:
+      - VITE_API_URL=http://localhost:8000
+      - VITE_WS_URL=ws://localhost:8000
+      - VITE_APP_TITLE=AtlasIQ Benelux-DE
+      - VITE_APP_VERSION=1.0.0
+      - NODE_ENV=${NODE_ENV:-development}
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - atlasiq_network
+    restart: unless-stopped
+    command: npm run dev -- --host 0.0.0.0 --port 3000
+
+  # =============================================================================
+  # Background Worker (Optional - can scale separately)
+  # =============================================================================
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: atlasiq_worker
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - APP_ENV=${APP_ENV:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - ENABLE_SCHEDULER=${ENABLE_SCHEDULER:-true}
+    volumes:
+      - ./backend:/app
+      - backend_logs:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - atlasiq_network
+    restart: unless-stopped
+    command: python -m app.tasks.worker
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_exports:
+    driver: local
+  backend_logs:
+    driver: local
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  atlasiq_network:
+    driver: bridge
+    name: atlasiq_network
