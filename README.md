@@ -501,3 +501,5 @@ MIT License - see LICENSE file for details
 **Last Updated**: October 20, 2025
 
 _Built with ❤️ for Private Equity & M&A professionals_
+#   a t l a s i q - w e b  
+ 
