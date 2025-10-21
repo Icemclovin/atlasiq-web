@@ -102,4 +102,10 @@ async def main():
 
 if __name__ == "__main__":
     exit_code = asyncio.run(main())
-    sys.exit(exit_code)
+    # Don't call sys.exit() when used in shell scripts
+    # Exit code is returned but doesn't stop the shell
+    if exit_code != 0:
+        print(f"⚠️  Initialization returned exit code: {exit_code}")
+    # Exit with code but don't call sys.exit in container startup
+    import os
+    os._exit(exit_code) if os.getenv("DOCKER_INIT_EXIT", "0") == "1" else None
