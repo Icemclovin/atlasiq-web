@@ -4,6 +4,8 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { Login } from '@/pages/Login';
 import { Register } from '@/pages/Register';
 import { Dashboard } from '@/pages/Dashboard';
+import { Companies } from '@/pages/Companies';
+import { CompanyDetailPage } from '@/pages/CompanyDetail';
 
 const App = () => {
   return (
@@ -17,6 +19,22 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/companies"
+            element={
+              <ProtectedRoute>
+                <Companies />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/companies/:id"
+            element={
+              <ProtectedRoute>
+                <CompanyDetailPage />
               </ProtectedRoute>
             }
           />

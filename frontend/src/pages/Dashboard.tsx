@@ -62,11 +62,29 @@ export const Dashboard = () => {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">AtlasIQ Dashboard</h1>
-              <p className="text-sm text-gray-600">
-                Welcome back, {user?.full_name}
-              </p>
+            <div className="flex items-center gap-6">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">AtlasIQ Dashboard</h1>
+                <p className="text-sm text-gray-600">
+                  Welcome back, {user?.full_name}
+                </p>
+              </div>
+              <nav className="flex gap-4">
+                <Button 
+                  onClick={() => navigate('/dashboard')} 
+                  variant="ghost"
+                  className="text-sm"
+                >
+                  Dashboard
+                </Button>
+                <Button 
+                  onClick={() => navigate('/companies')} 
+                  variant="ghost"
+                  className="text-sm"
+                >
+                  Companies
+                </Button>
+              </nav>
             </div>
             <Button onClick={handleLogout} variant="ghost">
               <LogOut className="h-5 w-5 mr-2" />
