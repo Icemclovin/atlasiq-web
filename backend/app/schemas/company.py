@@ -214,8 +214,8 @@ class CompanySearchParams(BaseModel):
     max_revenue: Optional[float] = None
     min_risk_score: Optional[float] = Field(None, ge=0, le=100)
     max_risk_score: Optional[float] = Field(None, ge=0, le=100)
-    sort_by: Optional[str] = Field("name", regex="^(name|revenue|risk_score|country_code)$")
-    sort_order: Optional[str] = Field("asc", regex="^(asc|desc)$")
+    sort_by: Optional[str] = Field("name", pattern="^(name|revenue|risk_score|country_code)$")
+    sort_order: Optional[str] = Field("asc", pattern="^(asc|desc)$")
     skip: int = Field(0, ge=0)
     limit: int = Field(20, ge=1, le=100)
 

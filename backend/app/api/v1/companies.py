@@ -28,7 +28,7 @@ from app.schemas.company import (
 from app.services.yahoo_finance import yahoo_client
 from app.services.normalization import normalization_service
 from app.services.company_risk import risk_scoring_service
-from app.api.deps import get_current_user
+from app.auth.dependencies import get_current_user
 from app.models.user import User
 
 router = APIRouter(prefix="/companies", tags=["Companies"])

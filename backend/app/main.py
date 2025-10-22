@@ -116,10 +116,11 @@ async def root():
 
 
 # Import and include routers
-from app.api.v1 import auth, data, companies
+from app.api.v1 import auth, data, companies, macro
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(data.router, prefix="/api/v1/data", tags=["Data"])
 app.include_router(companies.router, prefix="/api/v1", tags=["Companies"])
+app.include_router(macro.router)  # Macro router has prefix already defined
 
 
 if __name__ == "__main__":

@@ -18,6 +18,11 @@ httpx==0.25.2
 requests==2.31.0
 yfinance==0.2.32
 
+# Data Sources - Economic Data
+sdmx1==2.22.0  # IMF, Eurostat, ECB, OECD SDMX API client
+pandas==2.1.4  # Required by sdmx1 for data processing
+eurostat==1.0.2  # Official Eurostat Python client
+
 # Configuration & Environment
 pydantic==2.5.2
 pydantic-settings==2.1.0

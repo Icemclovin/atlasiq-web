@@ -5,6 +5,7 @@ import { dataService } from '@/services/data';
 import { Card } from '@/components/Card';
 import { Button } from '@/components/Button';
 import { Loading } from '@/components/Loading';
+import MacroIndicators from '@/components/MacroIndicators';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { TrendingUp, TrendingDown, Activity, Globe, AlertTriangle, LogOut } from 'lucide-react';
 import type { DashboardSummary, CountrySummary } from '@/types';
@@ -171,7 +172,7 @@ export const Dashboard = () => {
 
         {/* Charts */}
         {summary?.countries && summary.countries.length > 0 && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">GDP Growth by Country</h3>
               <ResponsiveContainer width="100%" height={300}>
@@ -201,6 +202,11 @@ export const Dashboard = () => {
             </Card>
           </div>
         )}
+
+        {/* Macro Economic Indicators */}
+        <div className="mb-8">
+          <MacroIndicators />
+        </div>
       </main>
     </div>
   );
